@@ -1,0 +1,183 @@
+#!/bin/bash
+# copyright d1rk.com
+
+
+# constants
+version="v1.0.8"
+gist=871523
+snippet=vhost
+serversuffix=""
+
+
+#### HELPERS ####
+function gist_get(){
+	wget -nv http://gist.github.com/raw/$1/$2
+}
+function my_pwgen(){
+	pwgen=$(type -p pwgen)
+	if test -z "$pwgen"
+		then 
+			sudo apt-get install pwgen
+	fi
+	pw=$(pwgen 16 | awk '{print $1}' | tail -1)
+	echo $pw
+}
+function run_sql(){
+	sql=$1
+	dbPw=$(sudo awk '/password/{print $3}' /etc/mysql/debian.cnf | tail -1)
+	dbAdmin=$(sudo awk '/user/{print $3}' /etc/mysql/debian.cnf | tail -1)
+
+	mysql --user=$dbAdmin --password=$dbPw -e "$sql"
+}
+function safe_name(){
+	echo ${1/\./_}
+}
+#### END OF HELPERS ####
+
+function create_mysql_app_user(){
+	dbUser=$(safe_name $1)_$(safe_name $2)
+	dbUserPw=$(my_pwgen)
+	echo "create new mysql user: $dbUser with password: $dbUserPw      **SAVE THE PASSWORD FOR YOU!**"
+	run_sql "CREATE USER '$dbUser'@'localhost' IDENTIFIED BY '$dbUserPw';GRANT ALL ON $dbUser.* TO '$dbUser'@'localhost';"
+	create_cake_database $1 $dbUser $dbUser $dbUserPw
+}
+function remove_mysql_app_user(){
+	dbUser=$(safe_name $1)_$(safe_name $2)
+	echo "drop mysql user: $dbUser"
+	run_sql "DROP USER '$dbUser'@'localhost';"
+}
+function create_mysql_db(){
+	dbName=$(safe_name $1)_$(safe_name $2)
+	dbPw=$(sudo awk '/password/{print $3}' /etc/mysql/debian.cnf | tail -1)
+	dbUser=$(sudo awk '/user/{print $3}' /etc/mysql/debian.cnf | tail -1)
+	mysqladmin -f -u $dbUser --password=$dbPw create $dbName
+}
+function remove_mysql_db(){
+	dbName=$(safe_name $1)_$(safe_name $2)
+	dbPw=$(sudo awk '/password/{print $3}' /etc/mysql/debian.cnf | tail -1)
+	dbUser=$(sudo awk '/user/{print $3}' /etc/mysql/debian.cnf | tail -1)
+	mysqladmin -u $dbUser --password=$dbPw drop $dbName
+}
+function create_cake_database(){
+	appname=$1
+	dbName=$2
+	dbUser=$3
+	dbPw=$4
+
+	#mkdir -p /tmp/script-run
+	#cd /tmp/script-run
+
+	snip="database"
+	gist_get $gist $snip
+
+	sed s/:database/$dbName/g $snip | sed s/:user/$dbUser/g | sed s/:password/$dbPw/g > database.php
+	rm database
+	sudo chown deploy:deploy database.php
+#	if [ ! -f /var/vhosts/$appname/app/config/database.php ]
+#		then
+#			sudo mkdir -p /var/vhosts/$appname/app/config
+#			sudo cp -f database.php /var/vhosts/$appname/app/config/database.php
+#	fi
+	sudo mv database.php /home/deploy/$dbName.php
+}
+function create(){
+	appname=$1
+	servername=$appname$serversuffix
+
+	mkdir -p /tmp/script-run
+	cd /tmp/script-run
+
+	sudo mkdir -p /var/vhosts/$appname/app/webroot
+	sudo mkdir -p /var/vhosts/$appname/logs
+	sudo chown -R deploy:www-data /var/vhosts/$appname
+	sudo chmod -R g+s,u+s /var/vhosts/$appname
+
+	gist_get $gist $snippet
+
+	sed s/:servername/$servername/g $snippet | sed s/:serveralias/$servername/g | sed s/:appname/$appname/g > $appname
+	sudo cp $appname /etc/apache2/sites-available
+	cd /etc/apache2/sites-enabled
+	sudo ln -s ../sites-available/$appname ./$appname
+	sudo /etc/init.d/apache2 restart
+
+	rm -rf /tmp/script-run  
+
+	echo "Next Steps: create a database for $appname -> use: $0 create-mysql-db $appname dev"
+}
+
+function remove(){
+	appname=$1
+	sudo rm /etc/apache2/sites-available/$appname
+	sudo rm /etc/apache2/sites-enabled/$appname
+	echo "Next Steps: remove the database for $appname -> use: $0 remove-mysql-db $appname dev"
+}
+
+function usage(){
+	echo "usage: vhost.sh <create | remove> <application-name>"  
+	echo "                <create-mysql-db | remove-mysql-db> <application-name-without-pre-suff-ix> <dev | test | prod>"  
+	echo "                <create-mysql-user | remove-mysql-user> <username-slug>"  
+	echo "                --help shows this screen"  
+	echo "                --version shows the version number"  
+	echo ""  
+	echo "some examples:"  
+	echo "       vhost.sh create d1rk.com"  
+	echo "       vhost.sh create dev.d1rk.com"  
+	echo ""  
+	echo "       vhost.sh create-mysql-db d1rk prod"  
+	echo "       vhost.sh create-mysql-db d1rk dev"  
+	echo ""  
+	exit -1
+}
+
+function version(){
+	echo "$0 version: $version"
+}
+
+if ( test -z "$1" ) || ( test -z "$2" )
+	then
+		if test "--version" = "$1" 
+			then 
+				version
+			else
+				usage
+		fi
+	exit -1
+fi
+
+case $1 in
+	"--version")version;;
+	"create")create $2;;
+	"remove")remove $2;;
+	"create-mysql-db")
+		if ( test -z "$3" )
+			then usage
+			else 
+				create_mysql_db $2 $3
+				create_mysql_app_user $2 $3
+		fi
+		;;
+	"remove-mysql-db")
+		if ( test -z "$3" )
+			then usage
+			else 
+				remove_mysql_db $2 $3
+				remove_mysql_app_user $2 $3
+		fi
+		;;
+	"create-mysql-user")
+		if ( test -z "$2" )
+			then usage
+			else 
+				create_mysql_app_user "gen" $2
+		fi
+		;;
+	"remove-mysql-user")
+		if ( test -z "$2" )
+			then usage
+			else 
+				remove_mysql_app_user "gen" $2
+		fi
+		;;
+	"--help")usage;;
+	*)usage;;
+esac
