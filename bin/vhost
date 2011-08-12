@@ -113,18 +113,20 @@ function remove(){
 }
 
 function usage(){
-	echo "usage: vhost.sh <create | remove> <application-name>"  
+	echo ""
+	echo "$0 $version"
+	echo "usage: $0 <create | remove> <application-name>"  
 	echo "                <create-mysql-db | remove-mysql-db> <application-name-without-pre-suff-ix> <dev | test | prod>"  
 	echo "                <create-mysql-user | remove-mysql-user> <username-slug>"  
 	echo "                --help shows this screen"  
 	echo "                --version shows the version number"  
 	echo ""  
 	echo "some examples:"  
-	echo "       vhost.sh create d1rk.com"  
-	echo "       vhost.sh create dev.d1rk.com"  
+	echo "       $0 create d1rk.com"  
+	echo "       $0 create dev.d1rk.com"  
 	echo ""  
-	echo "       vhost.sh create-mysql-db d1rk prod"  
-	echo "       vhost.sh create-mysql-db d1rk dev"  
+	echo "       $0 create-mysql-db d1rk prod"  
+	echo "       $0 create-mysql-db d1rk dev"  
 	echo ""  
 	exit -1
 }
