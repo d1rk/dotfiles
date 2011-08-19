@@ -1,0 +1,37 @@
+#!/bin/bash
+# copyright d1rk.com
+version = 1
+
+function usage(){
+	echo ""
+	echo "$0 $version"
+	echo "usage: $0 mbp"
+	echo ""  
+	exit -1
+}
+
+function version(){
+	echo "$0 version: $version"
+}
+
+if ( test -z "$1" )
+	then
+		if test "--version" = "$1" 
+			then 
+				version
+			else
+				usage
+		fi
+	exit -1
+fi
+
+case $1 in
+	"--version")version;;
+	"create")create $2;;
+
+	"--help")usage;;
+	*)usage;;
+esac
+
+
+ln -s ˜/.ssh/
