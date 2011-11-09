@@ -2,6 +2,7 @@
 startup_message off
 
 termcapinfo xterm* ti@:te@
+termcap xterm 'Co#256:AB=\E[48;5;%dm:AF=\E[38;5;%dm'
 startup_message off
 vbell off
 autodetach on
@@ -12,8 +13,9 @@ defutf8 on
 nonblock on
 
 hardstatus alwayslastline
-hardstatus string '%{= kw}[ %{= kb}%H%{= kw} ][%= %{= kw}%?%-Lw%?%{= kW}%n*%f %t%?%?%{= kw}%?%
-+Lw%?%?%= ][ %{r}%l%{w} ]%{w}[%{r} %d/%m/%y %C %A %{w}]%{w}'
+#hardstatus string '%{= kw}[ %{= kb}%H%{= kw} ][%= %{= kw}%?%-Lw%?%{= kW}%n*%f %t%?%?%{= kw}%?% +Lw%?%?%= ][ %{r}%l%{w} ]%{w}[%{r} %d/%m/%y %C %A %{w}]%{w}'
+
+hardstatus alwayslastline '%{gk}[ %{G}%H %{g}][%= %{wk}%?%-Lw%?%{=b kR}[%{W}%n%f %t%?(%u)%?%{=b kR}]%{= kw}%?%+Lw%?%?%= %{g}][%{Y}%l%{g}]%{=b C}[ %D %m/%d %C%a ]%{W}'
 
 bind 'q' quit
 
