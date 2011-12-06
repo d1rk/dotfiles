@@ -1,12 +1,10 @@
 #!/bin/bash
 # copyright d1rk.com
 
-
 # constants
-version="v2.0.1"
+version="v2.0.2"
 gist=1400460
 serversuffix=""
-
 
 #### HELPERS ####
 function gist_get(){
@@ -91,6 +89,7 @@ function create(){
 	sudo mkdir -p /var/vhosts/$appname/log
 	sudo chown -R deploy:www-data /var/vhosts/$appname
 	sudo chmod -R g+s,u+s /var/vhosts/$appname
+	sudo chmod -R 0777 /var/vhosts/$appname/log
 
 	snippet="li3.vhost"
 	gist_get $gist $snippet
@@ -103,19 +102,20 @@ function create(){
 
 	rm -rf /tmp/script-run  
 
-	echo "Next Steps: create a database for $appname -> use: $0 create-mysql-db $appname dev"
+	echo "Next Steps: create a database for $appname -> $0 create-mysql-db $appname dev"
 }
 
 function remove(){
 	appname=$1
 	sudo rm /etc/apache2/sites-available/$appname
 	sudo rm /etc/apache2/sites-enabled/$appname
-	echo "Next Steps: remove the database for $appname -> use: $0 remove-mysql-db $appname dev"
+	echo "Next Steps: remove the database for $appname -> $0 remove-mysql-db $appname dev"
 }
 
 function usage(){
 	echo ""
-	echo "$0 $version"
+	echo "$0 $version - using gist #$gist"
+	echo ""
 	echo "usage: $0 <create | remove> <application-name>"  
 	echo "                <create-mysql-db | remove-mysql-db> <application-name-without-pre-suff-ix> <dev | test | prod>"  
 	echo "                <create-mysql-user | remove-mysql-user> <username-slug>"  
@@ -133,7 +133,7 @@ function usage(){
 }
 
 function version(){
-	echo "$0 version: $version"
+	echo "$0 version: $version - using gist #$gist"
 }
 
 if ( test -z "$1" ) || ( test -z "$2" )
