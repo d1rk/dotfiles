@@ -3,9 +3,8 @@
 
 
 # constants
-version="v1.0.8"
-gist=871523
-snippet=vhost
+version="v2.0.1"
+gist=1400460
 serversuffix=""
 
 
@@ -67,17 +66,18 @@ function create_cake_database(){
 	#mkdir -p /tmp/script-run
 	#cd /tmp/script-run
 
-	snip="database"
-	gist_get $gist $snip
+	snippet="cake.database.php"
+	gist_get $gist $snippet
 
-	sed s/:database/$dbName/g $snip | sed s/:user/$dbUser/g | sed s/:password/$dbPw/g > database.php
-	rm database
+	sed s/:database/$dbName/g $snippet | sed s/:user/$dbUser/g | sed s/:password/$dbPw/g > database.php
+	rm cake.database.php
 	sudo chown deploy:deploy database.php
 #	if [ ! -f /var/vhosts/$appname/app/config/database.php ]
 #		then
 #			sudo mkdir -p /var/vhosts/$appname/app/config
 #			sudo cp -f database.php /var/vhosts/$appname/app/config/database.php
 #	fi
+	echo "$dbName.php created at /home/deploy/"
 	sudo mv database.php /home/deploy/$dbName.php
 }
 function create(){
@@ -87,11 +87,12 @@ function create(){
 	mkdir -p /tmp/script-run
 	cd /tmp/script-run
 
-	sudo mkdir -p /var/vhosts/$appname/app/webroot
-	sudo mkdir -p /var/vhosts/$appname/logs
+	sudo mkdir -p /var/vhosts/$appname/webroot
+	sudo mkdir -p /var/vhosts/$appname/log
 	sudo chown -R deploy:www-data /var/vhosts/$appname
 	sudo chmod -R g+s,u+s /var/vhosts/$appname
 
+	snippet="li3.vhost"
 	gist_get $gist $snippet
 
 	sed s/:servername/$servername/g $snippet | sed s/:serveralias/$servername/g | sed s/:appname/$appname/g > $appname
