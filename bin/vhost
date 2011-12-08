@@ -189,6 +189,7 @@ fi
 case $1 in
 	"--version")version;;
 	"create")create $2;;
+	"ssl")create_ssl $2;;
 	"remove")remove $2;;
 	"create-mysql-db")
 		if ( test -z "$3" )
