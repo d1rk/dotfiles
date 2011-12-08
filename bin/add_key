@@ -1,6 +1,6 @@
 #!/bin/bash
 file=/home/deploy/.ssh/authorized_keys
-key=`echo $@ | cut -f2- -d\ `
+key=`echo $@ | cut -f1- -d\ `
 if sudo grep -Fxq "$key" $file
 then
 	echo "Key already exists in $file"
