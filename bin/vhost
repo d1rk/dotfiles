@@ -2,13 +2,13 @@
 # copyright d1rk.com
 
 # constants
-version="v2.0.2"
+version="v2.1.0"
 gist=1400460
 serversuffix=""
 
 #### HELPERS ####
 function gist_get(){
-	wget -nv http://gist.github.com/raw/$1/$2
+	wget -q http://gist.github.com/raw/$1/$2
 }
 function my_pwgen(){
 	pwgen=$(type -p pwgen)
@@ -87,22 +87,61 @@ function create(){
 
 	sudo mkdir -p /var/vhosts/$appname/webroot
 	sudo mkdir -p /var/vhosts/$appname/log
-	sudo chown -R deploy:www-data /var/vhosts/$appname
+	sudo mkdir -p /etc/apache2/sites-available/$appname.conf.d
+	sudo chown -R deploy:www-data /var/vhosts/$appname /etc/apache2/sites-available/$appname.conf.d
 	sudo chmod -R g+s,u+s /var/vhosts/$appname
 	sudo chmod -R 0777 /var/vhosts/$appname/log
 
-	snippet="li3.vhost"
+	snippet="vhost"
 	gist_get $gist $snippet
 
 	sed s/:servername/$servername/g $snippet | sed s/:serveralias/$servername/g | sed s/:appname/$appname/g > $appname
 	sudo cp $appname /etc/apache2/sites-available
 	cd /etc/apache2/sites-enabled
 	sudo ln -s ../sites-available/$appname ./$appname
+
+	snippet="rewrite"
+	gist_get $gist $snippet
+
+	sed s/:servername/$servername/g $snippet | sed s/:serveralias/$servername/g | sed s/:appname/$appname/g > $appname.rewrite
+	sudo mv $appname.rewrite /etc/apache2/sites-available/$appname.conf.d/rewrite
+
 	sudo /etc/init.d/apache2 restart
 
-	rm -rf /tmp/script-run  
+	rm -rf /tmp/script-run
 
+	echo "Done."
+	echo
 	echo "Next Steps: create a database for $appname -> $0 create-mysql-db $appname dev"
+}
+
+function create_ssl(){
+	appname=$1
+	servername=$appname$serversuffix
+
+	if [ -h "/etc/apache2/sites-available/$appname" ]
+	then
+		# everything is fine
+	else
+		create $appname
+	fi
+
+	mkdir -p /tmp/script-run
+	cd /tmp/script-run
+
+	sudo mkdir -p /etc/apache2/ssl
+
+	snippet="ssl"
+	gist_get $gist $snippet
+
+	sed s/:servername/$servername/g $snippet | sed s/:serveralias/$servername/g | sed s/:appname/$appname/g > $appname.ssl
+	cat $appname.ssl | sudo tee -a /etc/apache2/sites-available/$appname
+
+	sudo /etc/init.d/apache2 restart
+
+	rm -rf /tmp/script-run
+
+	echo "Done."
 }
 
 function remove(){
