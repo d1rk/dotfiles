@@ -1,9 +1,10 @@
 #!/bin/bash
 file=/home/deploy/.ssh/authorized_keys
-if sudo grep -Fxq "$1" $file
+key=`echo $@ | cut -f2- -d\ `
+if sudo grep -Fxq "$key" $file
 then
 	echo "Key already exists in $file"
 else
-	echo "$1" | sudo tee -a $file
+	echo "$key" | sudo tee -a $file
 	echo "Key added to $file"
 fi
