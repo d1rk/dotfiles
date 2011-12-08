@@ -119,10 +119,8 @@ function create_ssl(){
 	appname=$1
 	servername=$appname$serversuffix
 
-	if [ -h "/etc/apache2/sites-available/$appname" ]
+	if ![ -h "/etc/apache2/sites-available/$appname" ]
 	then
-		# everything is fine
-	else
 		create $appname
 	fi
 
@@ -152,22 +150,29 @@ function remove(){
 }
 
 function usage(){
-	echo ""
+	echo
 	echo "$0 $version - using gist #$gist"
-	echo ""
-	echo "usage: $0 <create | remove> <application-name>"  
-	echo "                <create-mysql-db | remove-mysql-db> <application-name-without-pre-suff-ix> <dev | test | prod>"  
-	echo "                <create-mysql-user | remove-mysql-user> <username-slug>"  
-	echo "                --help shows this screen"  
-	echo "                --version shows the version number"  
-	echo ""  
-	echo "some examples:"  
-	echo "       $0 create d1rk.com"  
-	echo "       $0 create dev.d1rk.com"  
-	echo ""  
-	echo "       $0 create-mysql-db d1rk prod"  
-	echo "       $0 create-mysql-db d1rk dev"  
-	echo ""  
+	echo
+	echo " see https://gist.github.com/$gist for snippets"
+	echo
+	echo
+	echo " -- USAGE ----------"
+	echo "   $0 <create | remove> <application-name>"  
+	echo "           <create-mysql-db | remove-mysql-db> <application-name-without-pre-suff-ix> <dev | test | prod>"  
+	echo "           <create-mysql-user | remove-mysql-user> <username-slug>"  
+	echo "           --help shows this screen"  
+	echo "           --version shows the version number"  
+	echo  
+	echo " -- EXAMPLES -------"
+	echo "       $0 create d1rk.com"
+	echo "       $0 create dev.d1rk.com"
+	echo "       $0 remove d1rk.com"
+	echo
+	echo "       $0 ssl d1rk.com"
+	echo  
+	echo "       $0 create-mysql-db d1rk prod"
+	echo "       $0 create-mysql-db d1rk dev"
+	echo  
 	exit -1
 }
 
