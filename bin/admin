@@ -213,6 +213,7 @@ function mysql_usage(){
 	echo "  $0 mysql add <db_name> <password> - adds a database and a user '<db_name>'"
 	echo "  $0 mysql rm <db_name> - removes a database <db_name>"
 	echo "  $0 mysql backup <db_name> - backups a database <db_name>"
+	echo "  $0 mysql import <filename> <db_name> - imports <filename> from backups into database <db_name>"
 	echo "  $0 mysql status - prints current status of mysql"
 	echo
 	exit -1
@@ -261,6 +262,18 @@ function mysql_backup(){
 	[ $1 ] && db_name=$1 || read -p "Enter db_name: " db_name
 
 	header "MYSQL BACKUP"
+	echo "NOT IMPLEMENTED, YET!"
+}
+
+# imports mysql-database from backup
+#   $1 - filename, i.e. name of the database-backup to import
+#   $2 - db_name, name of the database
+# TODO: implement
+function mysql_import(){
+	[ $1 ] && filename=$1 || read -p "Enter filename: " filename
+	[ $2 ] && db_name=$1 || read -p "Enter db_name: " db_name
+
+	header "MYSQL IMPORT"
 	echo "NOT IMPLEMENTED, YET!"
 }
 
