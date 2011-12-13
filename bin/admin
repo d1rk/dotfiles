@@ -406,8 +406,8 @@ function help(){
 # Runs a few internal tests and checks, if everything works correctly
 function testrun(){
 	header "TESTRUN"
-	run "Run a test, running a script" "ls -al"
-	run_sql "Run MYSQL query" "SHOW PROCESSLIST;"
+	run "Running ls -al" "ls -al"
+	run_sql "Run MYSQL query" "SHOW DATABASES;"
 	run_mysqladmin "Run MYSQLADMIN script" "status"
 }
 
@@ -495,6 +495,23 @@ function init_colors(){
 
 }
 
+# Displays output of $cmd (or not, depending on $verbose)
+#   $cmd must be set in advance!
+function output(){
+	if [ $verbose ]
+	then
+		printf "\t$cmd\n"
+		command $cmd
+	else
+		out=`$cmd`
+	fi
+	if [ "$?" -ne "0" ]; then
+		printf "[ ${red}FAIL${default} ]\n\n"
+	else
+	 	printf "[ ${green}OK${default} ]\n\n"
+	fi
+}
+
 # runs a command, depending on $interactive, it may ask
 #   $1 - message to be displayed (if -v)
 #   $2 - command to be executed
@@ -505,32 +522,18 @@ function run_ask(){
 	cmd="$2"
 	[ $3 ] && local newline="" || local newline="\n"
 
-	header "COMMAND"
-	printf "$cmd"
-	header "COMMAND"
+	[ $dryrun ] && printf "\t${white}$message${default}\n\t$cmd\n[ ${yellow}SKIPPED${default} ]\n\n" && return
 
-#echo "interactive: $interactive"
-	if [ $dryrun ]
+	if [ $interactive ]
 	then
-		printf "\t${white}$message${default} $newline\n\t\t$cmd\n\n"
+		printf "\t${white}$message${default} "
+		read -s -n1 -p " [ y/N ] " answer
+		printf "\n"
+		[[ $answer = [qQ] ]] && exit -1
+		[[ $answer = [yY] ]] && output || printf "[ ${yellow}SKIPPED${default} ]\n\n"
 	else
-		if($interactive)
-		then
-			read -s -n1 -p "    $message [ y/N/q ] " answer
-			[[ $answer = [qQ] ]] && exit -1
-			if [[ $answer = [yY] ]]
-			then
-				out=`$cmd`
-				echo $out
-				printf "\n\t[ ${green}OK${default} ]\n"
-			else
-				printf "\n\t[ ${yellow}SKIPPED${default} ]\n"
-			fi
-		else
-			out=`$cmd`
-			echo $out
-			printf "\n\t[ ${green}OK${default} ]\n"
-		fi
+		printf "\t${white}$message${default}\n"
+		output
 	fi
 }
 
