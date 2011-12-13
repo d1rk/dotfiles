@@ -224,20 +224,21 @@ function mysql_usage(){
 # Retrieves current configuration for mysql-server
 function mysql_config(){
 
-	## auto-find environment variables
-	if [ -e "/etc/mysql/debian.cnf" ] && [ -z mysql_user ] && [ -z mysql_pw ]
-	then
-		# on debian-based systems, we can auto-investigate the mysql-root user data
-		mysql_user=$(sudo awk '/user/{print $3}' /etc/mysql/debian.cnf | tail -1)
-		mysql_pw=$(sudo awk '/password/{print $3}' /etc/mysql/debian.cnf | tail -1)
-	fi
-
 	# one could also look into ~/.my.cnf
-	if [ -e "~/.mytop" ] && [ mysql_mytop ]
+	if [ -e "~/.mytop" ] && [ $mysql_mytop ]
 	then
 		mysql_user=`cat ~/.mytop | fgrep "user=" | sed 's/user=//'`
 		mysql_pw=`cat ~/.mytop | fgrep "pass=" | sed 's/pass=//'`
 		mysql_host=`cat ~/.mytop | fgrep "host=" | sed 's/host=//'`
+		exit 0
+	fi
+
+	## auto-find environment variables
+	if [ -e "/etc/mysql/debian.cnf" ] && [ -z $mysql_user ] && [ -z $mysql_pw ]
+	then
+		# on debian-based systems, we can auto-investigate the mysql-root user data
+		mysql_user=$(sudo awk '/user/{print $3}' /etc/mysql/debian.cnf | tail -1)
+		mysql_pw=$(sudo awk '/password/{print $3}' /etc/mysql/debian.cnf | tail -1)
 	fi
 
 }
