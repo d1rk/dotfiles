@@ -230,7 +230,7 @@ function mysql_config(){
 		mysql_user=`cat ~/.mytop | fgrep "user=" | sed 's/user=//'`
 		mysql_pw=`cat ~/.mytop | fgrep "pass=" | sed 's/pass=//'`
 		mysql_host=`cat ~/.mytop | fgrep "host=" | sed 's/host=//'`
-		exit 0
+		return
 	fi
 
 	## auto-find environment variables
