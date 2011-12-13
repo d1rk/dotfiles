@@ -18,12 +18,14 @@ backup="/home/d1rk/backup"
 # used by this script. Should live below /tmp
 temp="/tmp/script-run"
 
+# Use .mytop file for mysql user/pass-data
+# IGNORES configured values below
+mysql_mytop=true
+
 # Mysql root user
-# leave empty, to auto-find (works only on debian-based os)
 mysql_user="root"
 
 # Mysql root user password
-# leave empty, to auto-find (works only on debian-based os)
 mysql_pw=""
 
 # Mysql hostname
@@ -382,7 +384,7 @@ function help(){
 # Runs a few internal tests and checks, if everything works correctly
 function testrun(){
 	header "TESTRUN"
-	run "Run a test, running a script" "ls al"
+	run "Run a test, running a script" "ls -al"
 	run_sql "Run MYSQL query" "SHOW PROCESSLIST;"
 	run_mysqladmin "Run MYSQLADMIN script" "status"
 }
@@ -592,6 +594,12 @@ then
 	mysql_pw=$(sudo awk '/password/{print $3}' /etc/mysql/debian.cnf | tail -1)
 
 	# one could also look into ~/.my.cnf
+	if [ -e "~/.mytop" ] && [ mysql_mytop ]
+	then
+		mysql_user=`cat ~/.mytop | fgrep "user=" | sed 's/user=//'`
+		mysql_pw=`cat ~/.mytop | fgrep "pass=" | sed 's/pass=//'`
+		mysql_host=`cat ~/.mytop | fgrep "host=" | sed 's/host=//'`
+	fi
 fi
 
 ## print configuration first, if requested
