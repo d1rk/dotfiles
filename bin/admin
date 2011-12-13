@@ -221,6 +221,27 @@ function mysql_usage(){
 	exit -1
 }
 
+# Retrieves current configuration for mysql-server
+function mysql_config(){
+
+	## auto-find environment variables
+	if [ -e "/etc/mysql/debian.cnf" ] && [ -z mysql_user ] && [ -z mysql_pw ]
+	then
+		# on debian-based systems, we can auto-investigate the mysql-root user data
+		mysql_user=$(sudo awk '/user/{print $3}' /etc/mysql/debian.cnf | tail -1)
+		mysql_pw=$(sudo awk '/password/{print $3}' /etc/mysql/debian.cnf | tail -1)
+	fi
+
+	# one could also look into ~/.my.cnf
+	if [ -e "~/.mytop" ] && [ mysql_mytop ]
+	then
+		mysql_user=`cat ~/.mytop | fgrep "user=" | sed 's/user=//'`
+		mysql_pw=`cat ~/.mytop | fgrep "pass=" | sed 's/pass=//'`
+		mysql_host=`cat ~/.mytop | fgrep "host=" | sed 's/host=//'`
+	fi
+
+}
+
 # Creates a database and an identical named user within mysql
 #   $1 - db_name, name of the database/user to create
 #   $2 - password, to be set for new user (if omitted, will be generated)
@@ -586,24 +607,9 @@ do
 done
 shift # get rid of --
 
-## auto-find environment variables
-if [ -e "/etc/mysql/debian.cnf" ] && [ -z mysql_user ] && [ -z mysql_pw ]
-then
-	# on debian-based systems, we can auto-investigate the mysql-root user data
-	mysql_user=$(sudo awk '/user/{print $3}' /etc/mysql/debian.cnf | tail -1)
-	mysql_pw=$(sudo awk '/password/{print $3}' /etc/mysql/debian.cnf | tail -1)
-
-	# one could also look into ~/.my.cnf
-	if [ -e "~/.mytop" ] && [ mysql_mytop ]
-	then
-		mysql_user=`cat ~/.mytop | fgrep "user=" | sed 's/user=//'`
-		mysql_pw=`cat ~/.mytop | fgrep "pass=" | sed 's/pass=//'`
-		mysql_host=`cat ~/.mytop | fgrep "host=" | sed 's/host=//'`
-	fi
-fi
-
 ## print configuration first, if requested
 init_colors $boring
+mysql_config
 [ $config ] && print_config
 [ $dryrun ] && print_dryrun
 [ $show_help ] && usage #scripts ends here
