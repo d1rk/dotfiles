@@ -12,7 +12,10 @@ web_group="www-data"
 
 # Folder, that is used for multi purpose backups
 # This folder MUST be backed up externally, 'nuff said!
-backup="/home/d1rk/backup"
+backup_folder="~/backup"
+
+# Folder, that is used for vhosts
+vhosts_folder="/var/vhosts"
 
 # Folder, that is automatically created, to hold temporary files
 # used by this script. Should live below /tmp
@@ -56,8 +59,8 @@ function vhost(){
 	local host="$2"
 	case $action in
 		"add") vhost_add $host $3 $4;;
-		"ssl") vhost_ssl $host $3 $4;;
 		"rm") vhost_rm $host $3 $4;;
+		"ssl") vhost_ssl $host $3 $4;;
 		"backup") vhost_backup $host $3 $4;;
 	 	*) vhost_usage;;
 	esac
@@ -70,7 +73,10 @@ function vhost_usage(){
 	echo "  allows following actions:"
 	echo "  $0 vhost add <hostname> - adds a host <hostname>"
 	echo "  $0 vhost rm <hostname> - removes a host <hostname>"
+	echo "  $0 vhost ssl <hostname> - enables SSL configuration on vhost"
 	echo "  $0 vhost backup <hostname> - backups vhost-configuration"
+	header "Current vhosts at $vhosts_folder"
+	ls -1 $vhosts_folder
 	exit -1
 }
 
@@ -87,10 +93,14 @@ function vhost_add(){
 	mkdir -p $temp
 
 	# setup vhost-folder
-	run "Create /var/vhosts/$app_name/webroot" "sudo mkdir -p /var/vhosts/$app_name/webroot"
-	run "Change permissions of /var/vhosts/$app_name" "sudo chmod -R g+s,u+s /var/vhosts/$app_name"
-	run "Create /var/vhosts/$app_name/log" "sudo mkdir -p /var/vhosts/$app_name/log"
-	run "Change permissions of /var/vhosts/$app_name/log" "sudo chmod -R 0777 /var/vhosts/$app_name/log"
+	run "Create /var/vhosts/$app_name/webroot"
+		"sudo mkdir -p /var/vhosts/$app_name/webroot"
+	run "Change permissions of /var/vhosts/$app_name"
+		"sudo chmod -R g+s,u+s /var/vhosts/$app_name"
+	run "Create /var/vhosts/$app_name/log"
+		"sudo mkdir -p /var/vhosts/$app_name/log"
+	run "Change permissions of /var/vhosts/$app_name/log"
+		"sudo chmod -R 0777 /var/vhosts/$app_name/log"
 
 	# prepare vhost
 	snippet="vhost"
@@ -98,18 +108,25 @@ function vhost_add(){
 	sed s/:servername/$host/g "$temp/$snippet" | sed s/:serveralias/$host/g | sed s/:appname/$app_name/g > "$temp/$app_name"
 
 	# setup vhost
-	run "Create vhost at /etc/apache2/sites-available/$app_name" "sudo mv $temp/$app_name /etc/apache2/sites-available/$app_name"
-	run "Create /etc/apache2/sites-available/$app_name.conf.d" "sudo mkdir -p /etc/apache2/sites-available/$app_name.conf.d"
-	run "Change owner of /etc/apache2/sites-available/$app_name.conf.d" "sudo chown -R $web_user:$web_group /var/vhosts/$app_name /etc/apache2/sites-available/$app_name.conf.d"
-	run "Enable vhost in /etc/apache2/sites-enabled/$app_name" "sudo ln -s /etc/apache2/sites-available/$app_name /etc/apache2/sites-enabled/$app_name"
+	run "Create vhost at /etc/apache2/sites-available/$app_name"
+		"sudo mv $temp/$app_name /etc/apache2/sites-available/$app_name"
+	run "Create /etc/apache2/sites-available/$app_name.conf.d"
+		"sudo mkdir -p /etc/apache2/sites-available/$app_name.conf.d"
+	run "Change owner of /etc/apache2/sites-available/$app_name.conf.d"
+		"sudo chown -R $web_user:$web_group /var/vhosts/$app_name /etc/apache2/sites-available/$app_name.conf.d"
+	run "Enable vhost in /etc/apache2/sites-enabled/$app_name"
+		"sudo ln -s /etc/apache2/sites-available/$app_name /etc/apache2/sites-enabled/$app_name"
 
 	# prepare rewrite-rules
 	snippet="rewrite"
 	gist_get $gist $snippet
 	sed s/:servername/$host/g "$temp/$snippet" | sed s/:serveralias/$host/g | sed s/:appname/$app_name/g > "$temp/$app_name.rewrite"
-	run "Create rewrite-file at /etc/apache2/sites-available/$app_name.conf.d/rewrite" "sudo mv $temp/$app_name.rewrite /etc/apache2/sites-available/$app_name.conf.d/rewrite"
-	run "Create empty file at /etc/apache2/sites-available/$app_name.conf.d/local" "sudo touch /etc/apache2/sites-available/$app_name.conf.d/local"
-	run "Restarting apache2" "sudo /etc/init.d/apache2 restart"
+	run "Create rewrite-file at /etc/apache2/sites-available/$app_name.conf.d/rewrite"
+		"sudo mv $temp/$app_name.rewrite /etc/apache2/sites-available/$app_name.conf.d/rewrite"
+	run "Create empty file at /etc/apache2/sites-available/$app_name.conf.d/local"
+		"sudo touch /etc/apache2/sites-available/$app_name.conf.d/local"
+	run "Restarting apache2"
+		"sudo /etc/init.d/apache2 restart"
 
 	# remove temp-folder
 	rm -rf $temp
@@ -160,12 +177,16 @@ function vhost_rm(){
 	header "${red}REMOVING${default} $app_name"
 
 	# TODO: check, if active
-	run "Deactivate /etc/apache2/sites-enabled/$app_name" "sudo rm -rf /etc/apache2/sites-enabled/$app_name"
+	run "Deactivate /etc/apache2/sites-enabled/$app_name"
+		"sudo rm -rf /etc/apache2/sites-enabled/$app_name"
 
 	# Remove configuration
-	run "Remove /etc/apache2/sites-available/$app_name" "sudo rm /etc/apache2/sites-available/$app_name"
-	run "Remove /etc/apache2/sites-available/$app_name.conf.d/" "sudo rm /etc/apache2/sites-available/$app_name.conf.d"
-	run "Restarting apache2" "sudo /etc/init.d/apache2 restart"
+	run "Remove /etc/apache2/sites-available/$app_name"
+		"sudo rm /etc/apache2/sites-available/$app_name"
+	run "Remove /etc/apache2/sites-available/$app_name.conf.d/"
+		"sudo rm -rf /etc/apache2/sites-available/$app_name.conf.d"
+	run "Restarting apache2"
+		"sudo service apache2 restart"
 
 	# Remove vhost folder?
 	#run "Remove /var/vhosts/$app_name" "sudo rm -rf /var/vhosts/$app_name"
