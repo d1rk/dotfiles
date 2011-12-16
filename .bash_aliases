@@ -1,3 +1,7 @@
+if [ -f ~/.bash_aliases_local ] ; then
+	. ~/.bash_aliases_local
+fi
+
 alias l='ls -alh'
 alias ..='cd ..'
 alias ...='cd ../..'
