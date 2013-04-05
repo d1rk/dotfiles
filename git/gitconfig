@@ -1,16 +1,32 @@
+[hub]
+        protocol = https
 [user]
-  name = Tasuku SUENAGA a.k.a. gunyarakun
-  email = tasuku-s-github@titech.ac
-[include]
-  path = .gitconfig.local
-[core]
-  pager = less -R
-  editor = vim
+        name = d1rk
+        email = d1rk@gmx.de
+[alias]
+        st = status
+        co = checkout
+        ci= commit
+        promote = !$ZSH/bin/git-promote
+        wtf     = !$ZSH/bin/git-wtf
+        rank-contributers = !$ZSH/bin/git-rank-contributers
+        count   = !git shortlog -sn
 [color]
-  ui = auto
+        diff = auto
+        status = auto
+        branch = auto
+        ui = true
+[core]
+        excludesfile = ~/.gitignore
 [push]
-  default = tracking
-[branch]
-  autosetuprebase = always
-[merge]
-  ff = false
+        default = current
+[apply]
+        whitespace = nowarn
+[mergetool]
+        keepBackup = false
+[difftool]
+        prompt = false
+[help]
+        autocorrect = 1
+[credential]
+        helper = osxkeychain
