@@ -5,19 +5,27 @@ source ~/antigen/antigen.zsh
 antigen-lib
 
 # bundles from the default repo
-antigen-bundle git
-antigen-bundle autojump
-# antigen-bundle brew
-antigen-bundle gem
-antigen-bundle git-flow
-antigen-bundle heroku
-antigen-bundle pip
+antigen-bundles <<EOBUNDLES
 
-# syntax highlighting
-antigen-bundle zsh-users/zsh-syntax-highlighting
+# default bundles
+git
+github
+extract
+autojump
+zsh-users/zsh-syntax-highlighting
+zsh-users/zsh-history-substring-search
+
+# package managers
+gem
+pip
+npm
+
+# custom
+
+EOBUNDLES
 
 # theme
-antigen-theme robbyrussell
+source ~/dotfiles/zsh/antigen-theme.zsh
 
 # OK, let's go
 antigen-apply
