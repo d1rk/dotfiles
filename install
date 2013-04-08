@@ -26,3 +26,4 @@ case $uname in
     exit 1
     ;;
 esac
+git clone --recursive https://github.com/d1rk/dotfiles.git ~/dotfiles
