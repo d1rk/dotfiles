@@ -8,20 +8,29 @@ antigen-lib
 antigen-bundles <<EOBUNDLES
 
 # default bundles
+cp
 git
-github
+# github
 extract
-autojump
+# autojump
+rsync
+# screen
+zsh-users/zsh-completions src
 zsh-users/zsh-syntax-highlighting
 zsh-users/zsh-history-substring-search
 
 # package managers
-gem
-pip
+# gem
+# pip
 npm
+composer
 
 # custom
-
+redis-cli
+# osx
+urltools
+# vagrant
+# bower
 EOBUNDLES
 
 # theme
