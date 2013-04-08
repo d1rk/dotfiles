@@ -28,5 +28,6 @@ case $uname in
 esac
 if [ ! -d ~/dotfiles ]; then
   git clone --recursive https://github.com/d1rk/dotfiles.git ~/dotfiles
+  cd ~/dotfiles && ./bootstrap
+  chsh -s /bin/zsh
 fi
-#chsh -s /bin/zsh
