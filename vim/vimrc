@@ -23,8 +23,6 @@ NeoBundle 'tpope/vim-rails'
 NeoBundle 'petdance/vim-perl'
 " javascript
 NeoBundle 'pangloss/vim-javascript'
-" scala
-NeoBundle 'derekwyatt/vim-scala'
 " php
 NeoBundle 'shawncplus/php.vim'
 " complete
