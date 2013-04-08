@@ -1,17 +1,12 @@
 ## About
 
-This is dotfiles for Tasuku SUENAGA a.k.a. gunyarakun.
+These are the dotfiles of Dirk Brünsicke aka d1rk.
 
 ## Install
 
+    source <(curl -fsSkL raw.github.com/d1rk/dotfiles/install)
 
-  ```
-  $ git clone https://github.com/gunyarakun/dotfiles.git ~/dotfiles
-  ```
+## bootstrap
 
-2. bootstrap
+    cd ~/dotfiles && ./bootstrap
 
-  ```
-  $ cd ~/dotfiles
-  $ ./bootstrap
-  ```
