@@ -9,27 +9,51 @@ base_dir=$(cd $cwd; pwd)
 git submodule init
 git submodule update
 
+
 # bin
 if [ ! -d ~/bin ]; then
-  mkdir ~/bin
-  cp vimless ~/bin
+    mkdir ~/bin
+    cp vimless ~/bin
 fi
+
 
 # zsh
 if [ ! -d ~/antigen ]; then
-  git clone https://github.com/zsh-users/antigen.git ~/antigen
+    git clone https://github.com/zsh-users/antigen.git ~/antigen
 fi
 if [ -f ~/.zshrc ]; then
     mv ~/.zshrc ~/old_zshrc
 fi
-ln -snf $base_dir/bash/profile ~/.profile
 ln -snf $base_dir/zsh/zshrc ~/.zshrc
 
+
+# bash
+if [ -f ~/.profile ]; then
+    mv ~/.profile ~/old_profile
+fi
+ln -snf $base_dir/bash/profile ~/.profile
+
+
 # git
+if [ -f ~/.gitconfig ]; then
+    mv ~/.gitconfig ~/old_gitconfig
+fi
 ln -snf $base_dir/git/gitconfig ~/.gitconfig
+
+if [ -f ~/.gitignore ]; then
+    mv ~/.gitignore ~/old_gitignore
+fi
 ln -snf $base_dir/git/gitignore ~/.gitignore
 
+
 # vim
+if [ -f ~/.vimrc ]; then
+    mv ~/.vimrc ~/old_vimrc
+fi
 ln -snf $base_dir/vim/vimrc ~/.vimrc
+
+if [ -f ~/.vim ]; then
+    mv ~/.vim ~/old_vim
+fi
 ln -snf $base_dir/vim/vim ~/.vim
 vim +NeoBundleInstall +qall
