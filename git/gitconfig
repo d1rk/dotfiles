@@ -1,8 +1,8 @@
 [hub]
         protocol = https
 [user]
-        name = d1rk
-        email = d1rk@gmx.de
+	name = d1rk
+	email = d1rk@gmx.de
 [alias]
         st = status
         co = checkout
@@ -23,7 +23,7 @@
 [apply]
         whitespace = nowarn
 [mergetool]
-        keepBackup = false
+	keepBackup = false
 [difftool]
         prompt = false
 [help]
