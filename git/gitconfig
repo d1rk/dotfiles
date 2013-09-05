@@ -8,6 +8,7 @@
         co = checkout
         ci= commit
         promote = !$ZSH/bin/git-promote
+        sync-upstream = !$ZSH/bin/git-sync-upstream
         wtf     = !$ZSH/bin/git-wtf
         rank-contributers = !$ZSH/bin/git-rank-contributers
         count   = !git shortlog -sn
