@@ -18,6 +18,7 @@
         ui = true
 [core]
         excludesfile = ~/.gitignore
+	quotepath = false
 [push]
         default = current
 [apply]
