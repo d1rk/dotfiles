@@ -1,0 +1,5 @@
+alias li3="libraries/lithium/console/li3"
+alias l='ls -alh'
+
+alias cp='nocorrect cp'
+alias mv='nocorrect mv'

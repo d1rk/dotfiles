@@ -5,7 +5,8 @@
 
 source ~/dotfiles/zsh/zshrc.antigen
 setopt no_cdable_vars
-alias cp='nocorrect cp'
 export EDITOR=vim
 export PATH=~/bin:/usr/local/share/npm/bin:$PATH
+
+[[ -f ~/.aliases ]] && . ~/.aliases
 [[ -f ~/.zsh_userrc ]] && . ~/.zsh_userrc

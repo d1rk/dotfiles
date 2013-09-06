@@ -49,5 +49,5 @@ cat <<INSTRUCTION
 Reload ~/.zshrc and execute anybrew-install
 
   $ source ~/.zshrc
-  $ ./anybrew-install
+  $ anybrew-install
 INSTRUCTION

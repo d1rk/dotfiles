@@ -10,13 +10,6 @@ git submodule init
 git submodule update
 
 
-# bin
-if [ ! -d ~/bin ]; then
-    mkdir ~/bin
-    cp vimless ~/bin
-fi
-
-
 # zsh
 if [ ! -d ~/antigen ]; then
     git clone https://github.com/zsh-users/antigen.git ~/antigen
@@ -32,6 +25,13 @@ if [ -f ~/.profile ]; then
     mv ~/.profile ~/old_profile
 fi
 ln -snf $base_dir/bash/profile ~/.profile
+
+
+# sh
+if [ -f ~/.aliases ]; then
+    mv ~/.aliases ~/old_aliases
+fi
+ln -snf $base_dir/sh/aliases ~/.aliases
 
 
 # git
