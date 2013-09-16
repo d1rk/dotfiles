@@ -1,7 +1,6 @@
 #!/bin/bash
-# Author : Hemanth.HM
+# Author : d1rk, based on code from Hemanth.HM
 # License : MIT
-# Some JSON parsing logic from http://l-o-n-g.livejournal.com/146422.html
 
 # Get the current repo URL
 url=$(git config --get remote.origin.url)
@@ -9,15 +8,22 @@ url=$(git config --get remote.origin.url)
 # Get the user and repo part from the URL
 # Must be something like part=${url#*//*/}
 # Sticking to github specific code as of now.
-
 part=${url#*github.com*/}
 
-# ZOMG parse JSON using the github api get the parent git_url.
-# would suggest to use curl -s .. | jq -r '.parent.git_url'
-upstream=$(curl -s https://api.github.com/repos/${part%.git} | sed -e 's/[{}]/''/g' | awk -v k="text" '{n=split($0,a,","); for (i=1; i<=n; i++) print a[i]}' | grep '"git_url":' | sed 's/:/ /1' | awk -F" " '{ print $2 }' | uniq | head -1)
+# fetch json response from github api and return correct value via inline python-code
+upstream=$(curl -s https://api.github.com/repos/${part%.git} | python -c 'import json,sys;obj=json.load(sys.stdin);print obj["parent"]["git_url"]')
+if [ "$?" -ne 0 ]; then
+	echo "no parent url found"
+	exit
+fi
 
-# Rest of it...
-git remote -add upstream $upstream
+# check, if upstream remote already exists
+git remote show upstream &>/dev/null
+if [ "$?" -ne 0 ]; then
+	echo "Found upstream: $upstream"
+	git remote add upstream $upstream
+fi
+
+# do the sync
 git checkout master
-git pull --rebase
-git push origin master
+git pull upstream master
