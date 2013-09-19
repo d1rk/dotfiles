@@ -1,6 +1,6 @@
 
 # if using pure (only) - uncomment following two lines:
-# source ~/dotfiles/zsh/pure.zsh
+# source ~/dotfiles/zsh/pure
 # return
 
 source ~/dotfiles/zsh/zshrc.antigen
