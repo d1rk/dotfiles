@@ -14,7 +14,7 @@ git
 extract
 # autojump
 rsync
-# screen
+tmux
 zsh-users/zsh-completions src
 zsh-users/zsh-syntax-highlighting
 zsh-users/zsh-history-substring-search
