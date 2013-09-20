@@ -33,6 +33,11 @@ if [ -f ~/.aliases ]; then
 fi
 ln -snf $base_dir/sh/aliases ~/.aliases
 
+if [ -f ~/.tmux.conf ]; then
+    mv ~/.tmux.conf ~/old_tmux.conf
+fi
+ln -snf $base_dir/sh/tmux.conf ~/.tmux.conf
+
 
 # git
 if [ -f ~/.gitconfig ]; then
