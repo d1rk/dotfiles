@@ -9,7 +9,7 @@ case $uname in
   Darwin)
     # TODO: check whether Xcode is installed or not
     ruby -e "$(curl -fsSkL raw.github.com/mxcl/homebrew/go)"
-    brew install git zsh
+    brew install git zsh autoconf
     defaults write com.googlecode.iterm2 NSScrollAnimationEnabled -bool NO
     ;;
   Linux)

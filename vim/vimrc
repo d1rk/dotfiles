@@ -101,6 +101,9 @@ set visualbell
 set modeline
 set modelines=5
 
+" keyboard shortcutes
+set pastetoggle=<F10>
+
 " neocomplcache
 " tab completion
 inoremap <expr><TAB> pumvisible() ? "\<C-n>" : "\<TAB>"

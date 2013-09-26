@@ -6,7 +6,7 @@
 source ~/dotfiles/zsh/zshrc.antigen
 setopt no_cdable_vars
 export EDITOR=vim
-export PATH=~/bin:/usr/local/share/npm/bin:$PATH
+export PATH=~/bin:/usr/local/bin/:/usr/local/sbin:/usr/local/share/npm/bin:$PATH
 
 [[ -f ~/.aliases ]] && . ~/.aliases
 [[ -f ~/.zsh_userrc ]] && . ~/.zsh_userrc
