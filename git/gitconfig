@@ -1,0 +1,34 @@
+[hub]
+        protocol = https
+[user]
+	name = d1rk
+	email = d1rk@gmx.de
+[alias]
+        st = status
+        co = checkout
+        ci= commit
+        promote = !$ZSH/bin/git-promote
+        sync-upstream = !$ZSH/bin/git-sync-upstream
+        wtf     = !$ZSH/bin/git-wtf
+        rank-contributers = !$ZSH/bin/git-rank-contributers
+        count   = !git shortlog -sn
+[color]
+        diff = auto
+        status = auto
+        branch = auto
+        ui = true
+[core]
+        excludesfile = ~/.gitignore
+	quotepath = false
+[push]
+        default = current
+[apply]
+        whitespace = nowarn
+[mergetool]
+	keepBackup = false
+[difftool]
+        prompt = false
+[help]
+        autocorrect = 1
+[credential]
+        helper = osxkeychain

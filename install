@@ -1,0 +1,33 @@
+#!/bin/sh
+# vim: set expandtab ts=2 sw=2 nowrap ft=sh ff=unix : */
+set -e -u
+
+uname=`uname`
+
+# install basic module
+case $uname in
+  Darwin)
+    # TODO: check whether Xcode is installed or not
+    ruby -e "$(curl -fsSkL raw.github.com/mxcl/homebrew/go)"
+    brew install git zsh autoconf
+    defaults write com.googlecode.iterm2 NSScrollAnimationEnabled -bool NO
+    ;;
+  Linux)
+    if [ -f /etc/debian_version ]; then
+      sudo apt-get install -y build-essential git-core zsh
+    elif [ -f /etc/redhat-release ]; then
+      sudo yum update
+      sudo yum groupinstall "Development Tools"
+      sudo yum install git zsh
+    fi
+    ;;
+  FreeBSD)
+    echo "To be implemented"
+    exit 1
+    ;;
+esac
+if [ ! -d ~/dotfiles ]; then
+  git clone --recursive https://github.com/d1rk/dotfiles.git ~/dotfiles
+  cd ~/dotfiles && ./bootstrap
+  chsh -s /bin/zsh
+fi

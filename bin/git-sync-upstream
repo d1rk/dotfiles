@@ -1,0 +1,29 @@
+#!/bin/bash
+# Author : d1rk, based on code from Hemanth.HM
+# License : MIT
+
+# Get the current repo URL
+url=$(git config --get remote.origin.url)
+
+# Get the user and repo part from the URL
+# Must be something like part=${url#*//*/}
+# Sticking to github specific code as of now.
+part=${url#*github.com*/}
+
+# fetch json response from github api and return correct value via inline python-code
+upstream=$(curl -s https://api.github.com/repos/${part%.git} | python -c 'import json,sys;obj=json.load(sys.stdin);print obj["parent"]["git_url"]')
+if [ "$?" -ne 0 ]; then
+	echo "no parent url found"
+	exit
+fi
+
+# check, if upstream remote already exists
+git remote show upstream &>/dev/null
+if [ "$?" -ne 0 ]; then
+	echo "Found upstream: $upstream"
+	git remote add upstream $upstream
+fi
+
+# do the sync
+git checkout master
+git pull upstream master
