@@ -3,3 +3,8 @@ alias l='ls -alhp'
 
 alias cp='nocorrect cp'
 alias mv='nocorrect mv'
+
+# see http://blog.sanctum.geek.nz/watching-with-tmux/
+function tmw {
+      tmux split-window -dh "$*"
+}
