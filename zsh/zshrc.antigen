@@ -37,6 +37,7 @@ EOBUNDLES
 
 # theme
 source ~/dotfiles/zsh/antigen-theme.zsh
+SEGMENT_SEPARATOR='⮀'
 
 # OK, let's go
 antigen-apply
