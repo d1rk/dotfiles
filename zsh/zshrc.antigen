@@ -10,6 +10,7 @@ antigen-bundles <<EOBUNDLES
 # default bundles
 cp
 git
+git-flow-avh
 # github
 extract
 # autojump
@@ -27,10 +28,11 @@ composer
 
 # custom
 redis-cli
-# osx
+osx
 urltools
-# vagrant
+vagrant
 # bower
+sublime
 EOBUNDLES
 
 # theme
