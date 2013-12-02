@@ -10,6 +10,7 @@ antigen-bundles <<EOBUNDLES
 # default bundles
 cp
 git
+# git-flow
 git-flow-avh
 # github
 extract
@@ -31,7 +32,7 @@ redis-cli
 osx
 urltools
 vagrant
-# bower
+bower
 sublime
 EOBUNDLES
 
